@@ -9,7 +9,13 @@ const Stack = createStackNavigator();
 
 const MainStackNavigator = () => (
   <Stack.Navigator>
-    <Stack.Screen name="Current" component={Current} />
+    <Stack.Screen
+      name="Current"
+      component={Current}
+      options={{
+        headerTitle: 'Shopping Lists',
+      }}
+    />
     <Stack.Screen name="EditList" component={EditList} />
     <Stack.Screen name="Archived" component={Archived} />
   </Stack.Navigator>
