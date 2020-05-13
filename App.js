@@ -15,7 +15,13 @@ const MainStackNavigator = () => (
         headerTitle: 'Shopping Lists',
       }}
     />
-    <Stack.Screen name="EditList" component={EditList} />
+    <Stack.Screen
+      name="EditList"
+      component={EditList}
+      options={{
+        headerTitle: 'Edit List',
+      }}
+    />
     <Stack.Screen name="Archived" component={Archived} />
     <Stack.Screen name="CreateList" component={CreateList} />
   </Stack.Navigator>

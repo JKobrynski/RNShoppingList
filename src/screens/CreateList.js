@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState} from 'react';
 import {
   Container,
   Text,
@@ -11,7 +11,7 @@ import {
   Button,
 } from 'native-base';
 import {SafeAreaView, FlatList} from 'react-native';
-import {createShoppingList, updateShoppingList} from '../database/methods';
+import {createShoppingList} from '../database/methods';
 
 const CreateList = ({navigation, route}) => {
   const [listName, setListName] = useState('');

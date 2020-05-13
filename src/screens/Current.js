@@ -85,7 +85,13 @@ const Current = ({navigation}) => {
   };
 
   const onEdit = item => {
-    navigation.navigate('EditList', {shoppingList: item});
+    let list = {
+      name: item.name,
+      products: item.products,
+      id: item.id,
+      archived: item.archived,
+    };
+    navigation.navigate('EditList', {shoppingList: list});
   };
 
   const onArchive = async item => {
@@ -106,50 +112,27 @@ const Current = ({navigation}) => {
     }
   };
 
-  const renderItem = item =>
-    archived ? (
-      <ListItem icon>
-        <Left>
-          <Icon
-            type="FontAwesome"
-            name="shopping-cart"
-            style={{
-              color: '#2e86de',
-            }}
-          />
-        </Left>
-        <Body>
-          <Text
-            style={{
-              fontFamily: 'Montserrat-SemiBold',
-              color: '#222f3e',
-            }}>
-            {item.name}
-          </Text>
-        </Body>
-      </ListItem>
-    ) : (
-      <ListItem
-        onPress={() => navigation.navigate('EditList', {shoppingList: item})}
-        icon>
-        <Left>
-          <Icon
-            type="FontAwesome"
-            name="shopping-cart"
-            style={{
-              color: '#2e86de',
-            }}
-          />
-        </Left>
-        <Body>
-          <Text
-            style={{
-              fontFamily: 'Montserrat-SemiBold',
-              color: '#222f3e',
-            }}>
-            {item.name}
-          </Text>
-        </Body>
+  const renderItem = item => (
+    <ListItem onPress={() => onEdit(item)} icon>
+      <Left>
+        <Icon
+          type="FontAwesome"
+          name="shopping-cart"
+          style={{
+            color: '#2e86de',
+          }}
+        />
+      </Left>
+      <Body>
+        <Text
+          style={{
+            fontFamily: 'Montserrat-SemiBold',
+            color: '#222f3e',
+          }}>
+          {item.name}
+        </Text>
+      </Body>
+      {archived ? null : (
         <Right>
           <Icon
             name="more"
@@ -160,8 +143,9 @@ const Current = ({navigation}) => {
             onPress={() => showActionSheet(item)}
           />
         </Right>
-      </ListItem>
-    );
+      )}
+    </ListItem>
+  );
 
   return (
     <SafeAreaView style={{flex: 1}}>
