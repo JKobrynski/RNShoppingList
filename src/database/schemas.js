@@ -17,7 +17,7 @@ export const ShoppingListSchema = {
   properties: {
     id: 'int',
     name: {type: 'string', default: new Date()},
-    created: {type: 'string', default: new Date()},
+    created: {type: 'date', default: new Date()},
     products: {type: 'list', objectType: PRODUCT_SCHEMA},
     archived: {type: 'bool', default: false},
   },
@@ -25,7 +25,7 @@ export const ShoppingListSchema = {
 
 export const dbOptions = {
   schema: [ProductSchema, ShoppingListSchema],
-  schemaVersion: 5,
+  schemaVersion: 6,
 };
 
 // export const createShoppingList = newShoppingList =>
