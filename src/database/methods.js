@@ -1,5 +1,27 @@
-import {SHOPPINGLIST_SCHEMA, PRODUCT_SCHEMA, dbOptions} from './schemas';
+import {SHOPPINGLIST_SCHEMA, dbOptions} from './schemas';
 
+/**
+ *
+ * @typedef {Product}
+ * @param {number} id - product id
+ * @param {string} name - product name
+ */
+
+/**
+ *
+ * @typedef {ShoppingList}
+ * @param {number} id - shopping list id
+ * @param {string} name - shopping list name
+ * @param {date} created - creation date
+ * @param {Array.<Product>} products - products array
+ * @param {boolean} archived - indicates weather shopping list is archived or not
+ */
+
+/**
+ * Method that saves a new shopping list to database
+ * @param {ShoppingList} newShoppingList - new shopping list object
+ * @returns {Promise.<ShoppingList>}
+ */
 export const createShoppingList = newShoppingList =>
   new Promise((resolve, reject) => {
     Realm.open(dbOptions)
@@ -12,6 +34,11 @@ export const createShoppingList = newShoppingList =>
       .catch(error => reject(error));
   });
 
+/**
+ * Method that updates existing shopping list in database
+ * @param {ShoppingList} shoppingList - updated shopping list object
+ * @returns {Promise}
+ */
 export const updateShoppingList = shoppingList =>
   new Promise((resolve, reject) => {
     Realm.open(dbOptions)
@@ -29,6 +56,11 @@ export const updateShoppingList = shoppingList =>
       .catch(error => reject(error));
   });
 
+/**
+ * Method that archives existing shopping list
+ * @param {number} shoppingListId - list id
+ * @returns {Promise}
+ */
 export const archiveShoppingList = shoppingListId =>
   new Promise((resolve, reject) => {
     Realm.open(dbOptions)
@@ -45,6 +77,11 @@ export const archiveShoppingList = shoppingListId =>
       .catch(error => reject(error));
   });
 
+/**
+ * Method that deletes shopping list from database
+ * @param {number} shoppingListId - list id
+ * @returns {Promise}
+ */
 export const deleteShoppingList = shoppingListId =>
   new Promise((resolve, reject) => {
     Realm.open(dbOptions)
@@ -61,61 +98,20 @@ export const deleteShoppingList = shoppingListId =>
       .catch(error => reject(error));
   });
 
+/**
+ * Method that retrieves shopping lists from database
+ * @param {boolean} archived - indicates type of shopping lists to retrieve, archived or active(default)
+ * @returns {Promise.<ShoppingList>}
+ */
 export const getAllShoppingLists = (archived = false) =>
   new Promise((resolve, reject) => {
     Realm.open(dbOptions)
       .then(realm => {
         let allShoppingLists = realm
           .objects(SHOPPINGLIST_SCHEMA)
-          //.filtered('archived = false');
           .filtered(`archived = ${archived}`)
           .sorted('created', true);
         resolve(allShoppingLists);
       })
       .catch(error => reject(error));
-  });
-
-export const filterShoppingLists = searchQuery =>
-  new Promise((resolve, reject) => {
-    Realm.open(dbOptions)
-      .then(realm => {
-        let filteredLists = realm
-          .objects(SHOPPINGLIST_SCHEMA)
-          .filtered(`name CONTAINS[c] "${searchQuery}"`);
-        resolve(filteredLists);
-      })
-      .catch(err => reject(err));
-  });
-
-export const insertProducts = (shoppingListId, newProducts) =>
-  new Promise((resolve, reject) => {
-    Realm.open(dbOptions)
-      .then(realm => {
-        let shoppingList = realm.objectForPrimaryKey(
-          SHOPPINGLIST_SCHEMA,
-          shoppingListId,
-        );
-
-        realm.write(() => {
-          for (var index in newProducts) {
-            shoppingList.products.push(newProducts[index]);
-          }
-
-          resolve(newProducts);
-        });
-      })
-      .catch(err => reject(err));
-  });
-
-export const getProductsFromList = shoppingListId =>
-  new Promise((resolve, reject) => {
-    Realm.open(dbOptions)
-      .then(realm => {
-        let shoppingList = realm.objectForPrimaryKey(
-          SHOPPINGLIST_SCHEMA,
-          shoppingListId,
-        );
-        resolve(shoppingList.products);
-      })
-      .catch(err => reject(err));
   });

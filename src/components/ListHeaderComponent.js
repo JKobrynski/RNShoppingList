@@ -20,7 +20,7 @@ const ListHeaderComponent = ({onPress, showButton}) => {
       {showButton && (
         <Icon
           type="FontAwesome"
-          name="plus-circle"
+          name="plus"
           style={styles.icon}
           onPress={onPress}
         />
@@ -31,12 +31,12 @@ const ListHeaderComponent = ({onPress, showButton}) => {
 
 const styles = StyleSheet.create({
   separator: {
-    marginTop: 20,
     height: 60,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingRight: 12,
+    backgroundColor: '#c8d6e5',
   },
   label: {
     fontFamily: 'Montserrat-SemiBold',

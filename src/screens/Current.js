@@ -12,6 +12,7 @@ const Current = ({navigation}) => {
 
   const isFocused = useIsFocused();
 
+  // Reload data each time the screen is focused
   useEffect(() => {
     if (isFocused) {
       reloadData();
