@@ -18,6 +18,10 @@ const Current = ({navigation}) => {
     }
   }, [isFocused]);
 
+  /**
+   * Function that fetches all active or archived shopping lists
+   * (depending on archived parameter) and updates current state
+   */
   const reloadData = async () => {
     try {
       setLoading(true);
@@ -30,10 +34,17 @@ const Current = ({navigation}) => {
     }
   };
 
+  /**
+   * Reload data each time archived parameter changes
+   */
   useEffect(() => {
     reloadData();
   }, [archived]);
 
+  /**
+   * Function that switches lists from archived to active
+   * (only if archived lists are currently displayed)
+   */
   const onActivePress = () => {
     if (archived) {
       setArchived(false);
@@ -42,6 +53,10 @@ const Current = ({navigation}) => {
     }
   };
 
+  /**
+   * Function that switches lists from active to archived
+   * (only if active lists are currently displayed)
+   */
   const onArchivedPress = () => {
     if (!archived) {
       setArchived(true);
@@ -89,19 +104,22 @@ const Current = ({navigation}) => {
           data={shoppingLists}
           loading={loading}
           onReload={reloadData}
+          archived={archived}
         />
-        <Icon
-          type="FontAwesome"
-          name="plus-circle"
-          style={{
-            fontSize: 70,
-            color: '#10ac84',
-            position: 'absolute',
-            bottom: 30,
-            right: 20,
-          }}
-          onPress={() => navigation.navigate('CreateList')}
-        />
+        {!archived && (
+          <Icon
+            type="FontAwesome"
+            name="plus-circle"
+            style={{
+              fontSize: 70,
+              color: '#10ac84',
+              position: 'absolute',
+              bottom: 30,
+              right: 20,
+            }}
+            onPress={() => navigation.navigate('CreateList')}
+          />
+        )}
       </Container>
     </SafeAreaView>
   );

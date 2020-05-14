@@ -1,27 +1,53 @@
 import React from 'react';
-import {RefreshControl} from 'react-native';
-import {
-  List,
-  Container,
-  Text,
-  ListItem,
-  Left,
-  Icon,
-  Body,
-  Right,
-  ActionSheet,
-} from 'native-base';
+import {RefreshControl, View, TouchableOpacity} from 'react-native';
+import {List, Text, Icon, ActionSheet} from 'native-base';
 import {useNavigation} from '@react-navigation/core';
 import {deleteShoppingList, archiveShoppingList} from '../database';
+import ListEmptyComponent from './ListEmptyComponent';
 
 // Settings for ActionSheet component
 const OPTIONS = ['Edit', 'Archive', 'Delete', 'Cancel'];
 const CANCEL_BUTTON_INDEX = 3;
 const DESTRUCTIVE_INDEX = 2;
 
-const ShoppingLists = ({data, loading, onReload}) => {
+/**
+ *
+ * @typedef Product
+ * @property {number} id - product id
+ * @property {string} name - product name
+ */
+
+/**
+ *
+ * @typedef ShoppingList
+ * @property {number} id - list id
+ * @property {string} name - list name
+ * @property {boolean} archived - weather list is archived or not
+ * @property {Array.<Product>} products - array of products
+ */
+
+/**
+ *
+ * @typedef {Props}
+ * @param {Array<ShoppingList>} data - data array from database
+ * @param {boolean} loading - loading indication param
+ * @param {function} onReload - reloading function (refetching data)
+ * @param {boolean} archived - paramaeter that idicates weather the user is currently
+ * viewing archived or active shopping lists
+ */
+
+/**
+ *
+ * @param {Props} props
+ */
+const ShoppingLists = props => {
+  const {data, loading, onReload, archived} = props;
   const navigation = useNavigation();
 
+  /**
+   *
+   * @param {ShoppingList} item
+   */
   const showActionSheet = item => {
     ActionSheet.show(
       {
@@ -34,6 +60,10 @@ const ShoppingLists = ({data, loading, onReload}) => {
     );
   };
 
+  /**
+   *
+   * @param {ShoppingList} item
+   */
   const onEdit = item => {
     let list = {
       name: item.name,
@@ -44,6 +74,11 @@ const ShoppingLists = ({data, loading, onReload}) => {
     navigation.navigate('EditList', {shoppingList: list});
   };
 
+  /**
+   *
+   * @param {number} index - button index
+   * @param {ShoppingList} item
+   */
   const handleButtonPress = (index, item) => {
     switch (index) {
       case 0:
@@ -60,6 +95,10 @@ const ShoppingLists = ({data, loading, onReload}) => {
     }
   };
 
+  /**
+   *
+   * @param {ShoppingList} item
+   */
   const onArchive = async item => {
     try {
       await archiveShoppingList(item.id);
@@ -69,6 +108,10 @@ const ShoppingLists = ({data, loading, onReload}) => {
     }
   };
 
+  /**
+   *
+   * @param {ShoppingList} item
+   */
   const onDelete = async item => {
     try {
       await deleteShoppingList(item.id);
@@ -78,40 +121,83 @@ const ShoppingLists = ({data, loading, onReload}) => {
     }
   };
 
+  /**
+   *
+   * @param {Date} date - date to parse
+   */
+  const parseDate = date => {
+    const dt = new Date(date);
+    return dt.toLocaleDateString('pl-EU');
+  };
+
+  /**
+   *
+   * @param {number} num - number of products
+   */
+  const getNumOfProducts = num => {
+    return `${num} product${num > 1 ? 's' : ''}`;
+  };
+
+  /**
+   *
+   * @param {ShoppingList} item
+   */
   const renderItem = item => (
-    <ListItem onPress={() => onEdit(item)} icon style={{marginBottom: 10}}>
-      <Left>
-        <Icon
-          type="FontAwesome"
-          name="shopping-basket"
-          style={{
-            color: '#2e86de',
-            fontSize: 20,
-          }}
-        />
-      </Left>
-      <Body>
+    <TouchableOpacity
+      onPress={() => onEdit(item)}
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 10,
+        borderTopWidth: 0.5,
+        borderTopWidth: 0.5,
+        marginHorizontal: 8,
+        borderTopColor: '#8395a7',
+      }}>
+      <View style={{flexDirection: 'column', flex: 1}}>
         <Text
           style={{
             fontFamily: 'Montserrat-SemiBold',
             color: '#222f3e',
-          }}>
+            fontSize: 18,
+            marginBottom: 10,
+          }}
+          numberOfLines={1}>
           {item.name}
         </Text>
-      </Body>
-      {item.archived ? null : (
-        <Right>
-          <Icon
-            name="more"
+        <Text numberOfLines={1}>
+          <Text
             style={{
+              fontFamily: 'Montserrat-Medium',
               color: '#576574',
-              fontSize: 25,
-            }}
-            onPress={() => showActionSheet(item)}
-          />
-        </Right>
+              fontSize: 16,
+            }}>
+            {parseDate(item.created)}
+          </Text>
+          <Text
+            style={{
+              fontFamily: 'Montserrat-Medium',
+              color: '#2e86de',
+              fontSize: 16,
+            }}>
+            {'  '}
+            {getNumOfProducts(item.products.length)}
+          </Text>
+        </Text>
+      </View>
+      {!item.archived && (
+        <Icon
+          name="more-vert"
+          type="MaterialIcons"
+          style={{
+            color: '#576574',
+            fontSize: 25,
+          }}
+          onPress={() => showActionSheet(item)}
+        />
       )}
-    </ListItem>
+    </TouchableOpacity>
   );
 
   return (
@@ -120,11 +206,11 @@ const ShoppingLists = ({data, loading, onReload}) => {
       dataArray={data}
       renderRow={item => renderItem(item)}
       keyExtractor={item => item.id.toString()}
-      ListEmptyComponent={() => (
-        <Container>
-          <Text>No current shopping lists</Text>
-        </Container>
-      )}
+      ListEmptyComponent={
+        <ListEmptyComponent
+          text={`No ${archived ? 'archived' : 'active'} shopping lists`}
+        />
+      }
       refreshControl={
         <RefreshControl
           colors="#10ac84"

@@ -119,7 +119,7 @@ const EditList = ({navigation, route}) => {
             />
           </Item>
         </Form>
-        {showProductInput ? (
+        {showProductInput && !archived ? (
           <Form style={{marginBottom: 30}}>
             <Item>
               <Input
@@ -167,15 +167,17 @@ const EditList = ({navigation, route}) => {
                 }}>
                 PRODUCTS
               </Text>
-              <Icon
-                type="FontAwesome"
-                name="plus-circle"
-                style={{
-                  fontSize: 30,
-                  color: '#2e86de',
-                }}
-                onPress={() => setShowProductInput(true)}
-              />
+              {!archived && (
+                <Icon
+                  type="FontAwesome"
+                  name="plus-circle"
+                  style={{
+                    fontSize: 30,
+                    color: '#2e86de',
+                  }}
+                  onPress={() => setShowProductInput(true)}
+                />
+              )}
             </Separator>
           }
         />

@@ -13,7 +13,7 @@ import {
 import {SafeAreaView, FlatList} from 'react-native';
 import {createShoppingList} from '../database/methods';
 
-const CreateList = ({navigation, route}) => {
+const CreateList = ({navigation}) => {
   const [listName, setListName] = useState('');
   const [products, setProducts] = useState([]);
   const [showProductInput, setShowProductInput] = useState(false);

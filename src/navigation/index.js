@@ -1,6 +1,6 @@
 import React from 'react';
 import {createStackNavigator} from '@react-navigation/stack';
-import {Current, EditList, Archived, CreateList} from '../screens';
+import {Current, EditList, CreateList} from '../screens';
 const Stack = createStackNavigator();
 
 export default MainStackNavigator = () => (
@@ -19,7 +19,6 @@ export default MainStackNavigator = () => (
         headerTitle: 'Edit List',
       }}
     />
-    <Stack.Screen name="Archived" component={Archived} />
     <Stack.Screen name="CreateList" component={CreateList} />
   </Stack.Navigator>
 );
