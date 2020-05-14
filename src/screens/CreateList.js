@@ -48,7 +48,7 @@ const CreateList = ({navigation}) => {
    * @param {number} index - index in products array
    */
   const onDeleteProduct = index => {
-    setProduct([...products.splice(index, 1)]);
+    setProducts([...products.filter((item, i) => i !== index)]);
   };
 
   // Submit name

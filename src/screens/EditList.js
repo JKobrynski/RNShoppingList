@@ -133,7 +133,7 @@ const EditList = ({navigation, route}) => {
    * @param {number} index - product index
    */
   const onDeleteProduct = index => {
-    setProduct([...products.splice(index, 1)]);
+    setProducts([...products.filter((item, i) => i !== index)]);
   };
 
   // Add product to products list
