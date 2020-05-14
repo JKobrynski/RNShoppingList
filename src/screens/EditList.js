@@ -6,13 +6,7 @@ import {
   Item,
   Input,
   Label,
-  ListItem,
   Button,
-  Body,
-  Icon,
-  Right,
-  List,
-  Separator,
   Grid,
   Row,
   Col,
@@ -23,6 +17,7 @@ import {
   deleteShoppingList,
   archiveShoppingList,
 } from '../database/methods';
+import {ProductList} from '../components';
 
 const EditList = ({navigation, route}) => {
   const [listName, setListName] = useState('');
@@ -55,7 +50,7 @@ const EditList = ({navigation, route}) => {
       await updateShoppingList(editedShoppingList);
       navigation.goBack();
     } catch (err) {
-      console.log(err);
+      alert('Unknown error occured!');
     }
   };
 
@@ -64,41 +59,19 @@ const EditList = ({navigation, route}) => {
       await deleteShoppingList(listId);
       navigation.goBack();
     } catch (err) {
-      console.log(err);
+      alert('Unknown error occured!');
     }
   };
 
   const onArchiveList = () => {
     archiveShoppingList(listId)
       .then(() => navigation.goBack())
-      .catch(err => console.log(err));
+      .catch(err => alert('Unknown error occured!'));
   };
 
-  const renderRow = (item, index) => (
-    <ListItem icon>
-      <Body>
-        <Text
-          style={{
-            fontFamily: 'Montserrat-Medium',
-            color: '#222f3e',
-          }}>
-          {item.name}
-        </Text>
-      </Body>
-      {archived ? null : (
-        <Right>
-          <Icon
-            name="close"
-            type="FontAwesome"
-            style={{
-              color: '#ee5253',
-            }}
-            onPress={() => setProduct([...products.splice(index, 1)])}
-          />
-        </Right>
-      )}
-    </ListItem>
-  );
+  const onDeleteProduct = index => {
+    setProduct([...products.splice(index, 1)]);
+  };
 
   return (
     <SafeAreaView style={{flex: 1}}>
@@ -145,41 +118,11 @@ const EditList = ({navigation, route}) => {
             </Item>
           </Form>
         ) : null}
-        <List
-          dataArray={products}
-          renderRow={(item, index) => renderRow(item, index)}
-          keyExtractor={item => item.id.toString()}
-          ListHeaderComponent={
-            <Separator
-              style={{
-                marginTop: 20,
-                height: 60,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                paddingRight: 12,
-              }}>
-              <Text
-                style={{
-                  fontFamily: 'Montserrat-SemiBold',
-                  color: '#576574',
-                  fontSize: 14,
-                }}>
-                PRODUCTS
-              </Text>
-              {!archived && (
-                <Icon
-                  type="FontAwesome"
-                  name="plus-circle"
-                  style={{
-                    fontSize: 30,
-                    color: '#2e86de',
-                  }}
-                  onPress={() => setShowProductInput(true)}
-                />
-              )}
-            </Separator>
-          }
+        <ProductList
+          data={products}
+          onAddPress={() => setShowProductInput(true)}
+          onDeletePress={onDeleteProduct}
+          archived={archived}
         />
         {listName && products.length && !archived && !showProductInput ? (
           <Grid style={{paddingHorizontal: 16, marginTop: 20}}>

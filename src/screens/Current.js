@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {Container, Text, Icon, Button} from 'native-base';
-import {SafeAreaView, View} from 'react-native';
+import {SafeAreaView, View, StyleSheet} from 'react-native';
 import {getAllShoppingLists} from '../database';
 import {useIsFocused} from '@react-navigation/core';
 import {ShoppingLists} from '../components';
@@ -67,37 +67,19 @@ const Current = ({navigation}) => {
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Container style={{flex: 1, paddingVertical: 20}}>
-        <View
-          style={{
-            width: '100%',
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-around',
-            paddingVertical: 10,
-            paddingHorizontal: 16,
-          }}>
+      <Container style={styles.container}>
+        <View style={styles.topButtonsContainer}>
           <Button
-            style={{width: 150, alignItems: 'center', justifyContent: 'center'}}
+            style={styles.button}
             bordered={archived}
             onPress={onActivePress}>
-            <Text
-              style={{
-                fontFamily: 'Montserrat-SemiBold',
-              }}>
-              Active
-            </Text>
+            <Text style={styles.buttonLabel}>Active</Text>
           </Button>
           <Button
-            style={{width: 150, alignItems: 'center', justifyContent: 'center'}}
+            style={styles.button}
             onPress={onArchivedPress}
             bordered={!archived}>
-            <Text
-              style={{
-                fontFamily: 'Montserrat-SemiBold',
-              }}>
-              Archived
-            </Text>
+            <Text style={styles.buttonLabel}>Archived</Text>
           </Button>
         </View>
         <ShoppingLists
@@ -110,13 +92,7 @@ const Current = ({navigation}) => {
           <Icon
             type="FontAwesome"
             name="plus-circle"
-            style={{
-              fontSize: 70,
-              color: '#10ac84',
-              position: 'absolute',
-              bottom: 30,
-              right: 20,
-            }}
+            style={styles.addButton}
             onPress={() => navigation.navigate('CreateList')}
           />
         )}
@@ -124,5 +100,35 @@ const Current = ({navigation}) => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    paddingVertical: 20,
+  },
+  topButtonsContainer: {
+    width: '100%',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-around',
+    paddingVertical: 10,
+    paddingHorizontal: 16,
+  },
+  button: {
+    width: 150,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  buttonLabel: {
+    fontFamily: 'Montserrat-SemiBold',
+  },
+  addButton: {
+    fontSize: 70,
+    color: '#10ac84',
+    position: 'absolute',
+    bottom: 30,
+    right: 20,
+  },
+});
 
 export default Current;

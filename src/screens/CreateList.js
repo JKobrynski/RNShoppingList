@@ -1,17 +1,8 @@
 import React, {useState} from 'react';
-import {
-  Container,
-  Text,
-  Form,
-  Item,
-  Input,
-  Label,
-  Content,
-  ListItem,
-  Button,
-} from 'native-base';
-import {SafeAreaView, FlatList} from 'react-native';
+import {Container, Text, Form, Item, Input, Label, Button} from 'native-base';
+import {SafeAreaView} from 'react-native';
 import {createShoppingList} from '../database/methods';
+import {ProductList} from '../components';
 
 const CreateList = ({navigation}) => {
   const [listName, setListName] = useState('');
@@ -28,68 +19,72 @@ const CreateList = ({navigation}) => {
 
     createShoppingList(newShoppingList)
       .then(list => navigation.goBack())
-      .catch(err => console.log(err));
+      .catch(err => alert('Unknown error occured!'));
+  };
+
+  const onDeleteProduct = index => {
+    setProduct([...products.splice(index, 1)]);
   };
 
   return (
     <SafeAreaView style={{flex: 1}}>
-      <Container>
-        <Content>
-          <Form style={{marginBottom: 20}}>
-            <Item stackedLabel>
-              <Label>List name</Label>
+      <Container style={{flex: 1}}>
+        <Form style={{marginBottom: 20}}>
+          <Item stackedLabel>
+            <Label>List name</Label>
+            <Input
+              value={listName}
+              onChangeText={setListName}
+              autoFocus
+              onSubmitEditing={() => {
+                if (!products.length) {
+                  setShowProductInput(true);
+                }
+              }}
+              blurOnSubmit={!!products.length}
+            />
+          </Item>
+        </Form>
+        {showProductInput ? (
+          <Form style={{marginBottom: 30}}>
+            <Item>
               <Input
-                value={listName}
-                onChangeText={setListName}
+                value={product}
+                onChangeText={setProduct}
                 autoFocus
-                onSubmitEditing={() => setShowProductInput(true)}
+                blurOnSubmit={false}
+                onSubmitEditing={() => {
+                  if (product) {
+                    let newProduct = {
+                      name: product,
+                      id: Math.floor(Date.now() / 1000),
+                    };
+                    setProducts([...products, newProduct]);
+                    setProduct('');
+                  }
+                }}
+                onBlur={() => {
+                  setShowProductInput(false);
+                  setProduct('');
+                }}
               />
             </Item>
           </Form>
-          <FlatList
-            data={products}
-            renderItem={({item}) => (
-              <ListItem>
-                <Text>{item.name}</Text>
-              </ListItem>
-            )}
-            keyExtractor={item => item.id.toString()}
-          />
-          {showProductInput ? (
-            <Form>
-              <Item>
-                <Input
-                  value={product}
-                  onChangeText={setProduct}
-                  autoFocus
-                  blurOnSubmit={false}
-                  onSubmitEditing={() => {
-                    if (product) {
-                      let newProduct = {
-                        name: product,
-                        id: Math.floor(Date.now() / 1000),
-                      };
-                      setProducts([...products, newProduct]);
-                      setProduct('');
-                    }
-                  }}
-                  onBlur={() => {
-                    setShowProductInput(false);
-                    setProduct('');
-                  }}
-                />
-              </Item>
-            </Form>
-          ) : null}
-          {listName && products.length ? (
-            <Button
-              success
-              style={{width: 100, marginTop: 20}}
-              onPress={onSaveList}>
-              <Text>Save</Text>
-            </Button>
-          ) : null}
-        </Content>
+        ) : null}
+        <ProductList
+          data={products}
+          onAddPress={() => setShowProductInput(true)}
+          onDeletePress={onDeleteProduct}
+          archived={false}
+        />
+        {listName && products.length ? (
+          <Button
+            success
+            style={{width: 100, marginTop: 20}}
+            onPress={onSaveList}>
+            <Text>Save</Text>
+          </Button>
+        ) : null}
       </Container>
     </SafeAreaView>
   );
